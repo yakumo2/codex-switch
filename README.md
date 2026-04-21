@@ -93,6 +93,16 @@ Saved current account as: leemao
 - **保存**: 复制 `~/.codex/auth.json` → `profiles/auth-<email用户名>.json`
 - **识别账户**: 从 JWT `id_token` 中解码提取 email
 
+## 支持的平台
+
+| 平台 | 支持 |
+|------|------|
+| macOS | ✅ 原生支持 |
+| Linux | ✅ 原生支持 |
+| Windows (WSL) | ✅ 支持 |
+| Windows (Git Bash) | ✅ 支持 |
+| Windows (原生) | ❌ 需要 WSL 或 Git Bash |
+
 ## 前提条件
 
 1. 已安装 [Codex CLI](https://github.com/openai/codex)：

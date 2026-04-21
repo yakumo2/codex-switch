@@ -17,7 +17,8 @@ get_email_from_jwt() {
     if [ $mod -ne 0 ]; then
         payload="${payload}$(printf '=%.0s' $(seq 1 $((4 - mod))))"
     fi
-    echo "$payload" | base64 -d 2>/dev/null | grep -o '"email":"[^"]*"' | sed 's/"email":"//;s/"$//' | head -1
+    # Use --decode for cross-platform compatibility (macOS BSD and Linux GNU)
+    echo "$payload" | base64 --decode 2>/dev/null | grep -o '"email":"[^"]*"' | sed 's/"email":"//;s/"$//' | head -1
 }
 
 get_email_from_file() {

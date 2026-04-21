@@ -93,6 +93,16 @@ Saved current account as: leemao
 - **Save**: Copy `~/.codex/auth.json` → `profiles/auth-<email_username>.json`
 - **Identify account**: Decode JWT `id_token` to extract email
 
+## Supported Platforms
+
+| Platform | Support |
+|----------|----------|
+| macOS | ✅ Native |
+| Linux | ✅ Native |
+| Windows (WSL) | ✅ Supported |
+| Windows (Git Bash) | ✅ Supported |
+| Windows (Native) | ❌ Requires WSL or Git Bash |
+
 ## Prerequisites
 
 1. [Codex CLI](https://github.com/openi/codex) installed:
