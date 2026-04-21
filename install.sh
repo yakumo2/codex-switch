@@ -28,7 +28,7 @@ elif [ -f "./$SCRIPT_NAME" ]; then
     SCRIPT_SOURCE="$(pwd)/$SCRIPT_NAME"
 else
     # Download from GitHub
-    DOWNLOAD_URL="${CODEX_SWITCH_URL:-https://raw.githubusercontent.com/yakumo2/codex-switch/main/codex-switch/codex-switch}"
+    DOWNLOAD_URL="${CODEX_SWITCH_URL:-https://raw.githubusercontent.com/yakumo2/codex-switch/main/codex-switch}"
     echo "Downloading from: $DOWNLOAD_URL"
     curl -fsSL "$DOWNLOAD_URL" -o "$INSTALL_DIR/$SCRIPT_NAME"
     chmod +x "$INSTALL_DIR/$SCRIPT_NAME"

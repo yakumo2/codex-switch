@@ -16,32 +16,23 @@
 ### 方法一：手动安装
 
 ```bash
-# 1. 创建目录
-mkdir -p ~/.local/bin
-mkdir -p ~/.codex/profiles
-
-# 2. 复制脚本到 PATH
-cp codex-switch ~/.local/bin/codex-switch
+mkdir -p ~/.local/bin ~/.codex/profiles
+cp codex-switch ~/.local/bin/
 chmod +x ~/.local/bin/codex-switch
+```
 
-# 3. 确保 ~/.local/bin 在 PATH 中
-echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
-source ~/.bashrc
+### 方法二：一键安装（从 GitHub）
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/yakumo2/codex-switch/main/install.sh | bash
 ```
 
 ### 方法二：一键安装脚本
 
-解压后进入目录，运行安装脚本：
-
-```bash
-cd codex-switch
-bash install.sh
-```
-
 或者直接下载远程安装（从 GitHub）：
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/yakumo2/codex-switch/main/codex-switch/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/yakumo2/codex-switch/main/install.sh | bash
 ```
 
 ## 使用方法

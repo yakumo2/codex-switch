@@ -16,32 +16,23 @@ A command-line tool to quickly switch between multiple Codex accounts.
 ### Option 1: Manual Install
 
 ```bash
-# 1. Create directories
-mkdir -p ~/.local/bin
-mkdir -p ~/.codex/profiles
-
-# 2. Copy script to PATH
-cp codex-switch ~/.local/bin/codex-switch
+mkdir -p ~/.local/bin ~/.codex/profiles
+cp codex-switch ~/.local/bin/
 chmod +x ~/.local/bin/codex-switch
+```
 
-# 3. Ensure ~/.local/bin is in PATH
-echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
-source ~/.bashrc
+### Option 2: One-liner (from GitHub)
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/yakumo2/codex-switch/main/install.sh | bash
 ```
 
 ### Option 2: One-liner Install Script
 
-Extract and run the install script:
-
-```bash
-cd codex-switch
-bash install.sh
-```
-
 Or download and run directly from GitHub:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/yakumo2/codex-switch/main/codex-switch/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/yakumo2/codex-switch/main/install.sh | bash
 ```
 
 ## Usage
