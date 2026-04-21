@@ -8,12 +8,30 @@ A command-line tool to quickly switch between multiple Codex accounts.
 
 - List all saved accounts
 - One-click account switching
-- Auto-save current account before switching
+- Auto-save current account
 - Show current active account
+
+## Supported Platforms
+
+| Platform | Support |
+|----------|----------|
+| macOS | ✅ Native |
+| Linux | ✅ Native |
+| Windows (PowerShell) | ✅ Native |
+| Windows (WSL) | ✅ Supported |
+| Windows (Git Bash) | ✅ Supported |
 
 ## Installation
 
-### Option 1: Manual Install
+### macOS / Linux / WSL / Git Bash
+
+One-liner:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/yakumo2/codex-switch/main/install.sh | bash
+```
+
+Or manual:
 
 ```bash
 mkdir -p ~/.local/bin ~/.codex/profiles
@@ -21,18 +39,20 @@ cp codex-switch ~/.local/bin/
 chmod +x ~/.local/bin/codex-switch
 ```
 
-### Option 2: One-liner (from GitHub)
+### Windows (PowerShell)
 
-```bash
-curl -fsSL https://raw.githubusercontent.com/yakumo2/codex-switch/main/install.sh | bash
+One-liner:
+
+```powershell
+irm https://raw.githubusercontent.com/yakumo2/codex-switch/main/install.ps1 | iex
 ```
 
-### Option 2: One-liner Install Script
+Or manual:
 
-Or download and run directly from GitHub:
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/yakumo2/codex-switch/main/install.sh | bash
+```powershell
+mkdir "$env:USERPROFILE\.local\bin" -Force
+mkdir "$env:USERPROFILE\.codex\profiles" -Force
+copy codex-switch.ps1 "$env:USERPROFILE\.local\bin\"
 ```
 
 ## Usage
@@ -82,30 +102,21 @@ Saved current account as: leemao
 ## How it works
 
 ```
-~/.codex/
+~/.codex/                          (macOS/Linux)
+%USERPROFILE%\.codex\              (Windows)
 ├── auth.json              ← Current Codex credentials
 └── profiles/              ← Saved account profiles
     ├── auth-bookgenesis.json
     └── auth-leemao.json
 ```
 
-- **Switch**: Copy `profiles/auth-<name>.json` → `~/.codex/auth.json`
-- **Save**: Copy `~/.codex/auth.json` → `profiles/auth-<email_username>.json`
+- **Switch**: Copy `profiles/auth-<name>.json` → `auth.json`
+- **Save**: Copy `auth.json` → `profiles/auth-<email_username>.json`
 - **Identify account**: Decode JWT `id_token` to extract email
-
-## Supported Platforms
-
-| Platform | Support |
-|----------|----------|
-| macOS | ✅ Native |
-| Linux | ✅ Native |
-| Windows (WSL) | ✅ Supported |
-| Windows (Git Bash) | ✅ Supported |
-| Windows (Native) | ❌ Requires WSL or Git Bash |
 
 ## Prerequisites
 
-1. [Codex CLI](https://github.com/openi/codex) installed:
+1. [Codex CLI](https://github.com/openai/codex) installed:
    ```bash
    npm install -g @openai/codex
    ```
@@ -122,7 +133,10 @@ Saved current account as: leemao
 
 Try restarting Codex or clearing the cache:
 ```bash
+# macOS/Linux
 rm -rf ~/.codex/cache/*
+# Windows PowerShell
+Remove-Item "$env:USERPROFILE\.codex\cache\*" -Recurse -Force
 ```
 
 ### Q: How to add a new account?
@@ -131,18 +145,25 @@ rm -rf ~/.codex/cache/*
 2. Login to Codex with new account
 3. Run `codex-switch capture` to save
 
-### Q: Which systems are supported?
+### Q: Windows shows execution policy error?
 
-macOS, Linux, WSL. Windows native requires Git Bash or WSL.
+```powershell
+# Temporarily allow script execution
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+# Or bypass policy directly
+powershell -ExecutionPolicy Bypass -File codex-switch.ps1 list
+```
 
 ## File Structure
 
 ```
 codex-switch/
-├── codex-switch    # Main script
-├── install.sh      # One-liner install script
-├── README.md       # Documentation (Chinese)
-└── README_EN.md    # Documentation (English)
+├── codex-switch        # Bash script (macOS/Linux/WSL)
+├── codex-switch.ps1    # PowerShell script (Windows)
+├── install.sh          # One-liner installer (macOS/Linux/WSL)
+├── install.ps1         # One-liner installer (Windows)
+├── README.md           # Documentation (Chinese)
+└── README_EN.md        # Documentation (English)
 ```
 
 ## License

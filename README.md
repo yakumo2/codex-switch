@@ -11,9 +11,27 @@
 - 自动保存当前账户
 - 显示当前活跃账户
 
+## 支持的平台
+
+| 平台 | 支持 |
+|------|------|
+| macOS | ✅ 原生支持 |
+| Linux | ✅ 原生支持 |
+| Windows (PowerShell) | ✅ 原生支持 |
+| Windows (WSL) | ✅ 支持 |
+| Windows (Git Bash) | ✅ 支持 |
+
 ## 安装
 
-### 方法一：手动安装
+### macOS / Linux / WSL / Git Bash
+
+一键安装：
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/yakumo2/codex-switch/main/install.sh | bash
+```
+
+或手动安装：
 
 ```bash
 mkdir -p ~/.local/bin ~/.codex/profiles
@@ -21,18 +39,20 @@ cp codex-switch ~/.local/bin/
 chmod +x ~/.local/bin/codex-switch
 ```
 
-### 方法二：一键安装（从 GitHub）
+### Windows (PowerShell)
 
-```bash
-curl -fsSL https://raw.githubusercontent.com/yakumo2/codex-switch/main/install.sh | bash
+一键安装：
+
+```powershell
+irm https://raw.githubusercontent.com/yakumo2/codex-switch/main/install.ps1 | iex
 ```
 
-### 方法二：一键安装脚本
+或手动安装：
 
-或者直接下载远程安装（从 GitHub）：
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/yakumo2/codex-switch/main/install.sh | bash
+```powershell
+mkdir "$env:USERPROFILE\.local\bin" -Force
+mkdir "$env:USERPROFILE\.codex\profiles" -Force
+copy codex-switch.ps1 "$env:USERPROFILE\.local\bin\"
 ```
 
 ## 使用方法
@@ -82,26 +102,17 @@ Saved current account as: leemao
 ## 工作原理
 
 ```
-~/.codex/
+~/.codex/                          (macOS/Linux)
+%USERPROFILE%\.codex\              (Windows)
 ├── auth.json              ← Codex 当前使用的登录凭证
 └── profiles/              ← 保存的账户配置文件
     ├── auth-bookgenesis.json
     └── auth-leemao.json
 ```
 
-- **切换**: 复制 `profiles/auth-<name>.json` → `~/.codex/auth.json`
-- **保存**: 复制 `~/.codex/auth.json` → `profiles/auth-<email用户名>.json`
+- **切换**: 复制 `profiles/auth-<name>.json` → `auth.json`
+- **保存**: 复制 `auth.json` → `profiles/auth-<email用户名>.json`
 - **识别账户**: 从 JWT `id_token` 中解码提取 email
-
-## 支持的平台
-
-| 平台 | 支持 |
-|------|------|
-| macOS | ✅ 原生支持 |
-| Linux | ✅ 原生支持 |
-| Windows (WSL) | ✅ 支持 |
-| Windows (Git Bash) | ✅ 支持 |
-| Windows (原生) | ❌ 需要 WSL 或 Git Bash |
 
 ## 前提条件
 
@@ -122,7 +133,10 @@ Saved current account as: leemao
 
 尝试重新启动 Codex 或清除缓存：
 ```bash
+# macOS/Linux
 rm -rf ~/.codex/cache/*
+# Windows PowerShell
+Remove-Item "$env:USERPROFILE\.codex\cache\*" -Recurse -Force
 ```
 
 ### Q: 如何添加新账户？
@@ -131,18 +145,25 @@ rm -rf ~/.codex/cache/*
 2. 用 Codex 登录新账户
 3. 运行 `codex-switch capture` 保存
 
-### Q: 支持哪些系统？
+### Q: Windows 提示执行策略错误？
 
-支持 macOS、Linux、WSL。Windows 原生需 Git Bash 或 WSL。
+```powershell
+# 临时允许脚本执行
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+# 或者直接绕过策略运行
+powershell -ExecutionPolicy Bypass -File codex-switch.ps1 list
+```
 
 ## 文件结构
 
 ```
 codex-switch/
-├── codex-switch    # 主脚本
-├── install.sh      # 一键安装脚本
-├── README.md       # 本文档（中文）
-└── README_EN.md    # 英文文档
+├── codex-switch        # Bash 主脚本 (macOS/Linux/WSL)
+├── codex-switch.ps1    # PowerShell 主脚本 (Windows)
+├── install.sh          # 一键安装脚本 (macOS/Linux/WSL)
+├── install.ps1         # 一键安装脚本 (Windows)
+├── README.md           # 本文档（中文）
+└── README_EN.md        # 英文文档
 ```
 
 ## License
