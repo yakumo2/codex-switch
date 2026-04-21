@@ -65,6 +65,12 @@ codex-switch
 codex-switch list
 ```
 
+### Show version
+
+```bash
+codex-switch version
+```
+
 Example output:
 ```
 Available Codex accounts:

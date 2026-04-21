@@ -1,8 +1,9 @@
 #!/bin/bash
 # Codex Account Switcher
-# https://github.com/openclaw/openclaw
+# https://github.com/yakumo2/codex-switch
 # Usage: codex-switch <account>
 
+VERSION="1.1.0"
 CODEX_AUTH="$HOME/.codex/auth.json"
 PROFILES_DIR="$HOME/.codex/profiles"
 
@@ -107,6 +108,10 @@ case "$1" in
     capture|save)
         capture_current
         ;;
+    version|-v|--version)
+        echo "codex-switch version $VERSION"
+        echo "https://github.com/yakumo2/codex-switch"
+        ;;
     "")
         list_accounts
         echo ""
@@ -114,6 +119,7 @@ case "$1" in
         echo "  codex-switch <name>   - Switch to saved account"
         echo "  codex-switch list     - List all saved accounts"
         echo "  codex-switch capture  - Save current account"
+        echo "  codex-switch version  - Show version"
         ;;
     *)
         switch_account "$1"

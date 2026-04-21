@@ -65,6 +65,12 @@ codex-switch
 codex-switch list
 ```
 
+### 查看版本
+
+```bash
+codex-switch version
+```
+
 输出示例：
 ```
 Available Codex accounts:

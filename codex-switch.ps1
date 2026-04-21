@@ -8,6 +8,7 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
+$VERSION = "1.1.0"
 
 $CODEX_AUTH = "$env:USERPROFILE\.codex\auth.json"
 $PROFILES_DIR = "$env:USERPROFILE\.codex\profiles"
@@ -151,6 +152,10 @@ function Capture-Current {
 switch ($Command) {
     { $_ -in "list", "ls", "-l" } { List-Accounts }
     { $_ -in "capture", "save" } { Capture-Current }
+    { $_ -in "version", "-v", "--version" } {
+        Write-Host "codex-switch version $VERSION"
+        Write-Host "https://github.com/yakumo2/codex-switch"
+    }
     "" {
         List-Accounts
         Write-Host ""
@@ -158,6 +163,7 @@ switch ($Command) {
         Write-Host "  codex-switch <name>   - Switch to saved account"
         Write-Host "  codex-switch list     - List all saved accounts"
         Write-Host "  codex-switch capture  - Save current account"
+        Write-Host "  codex-switch version  - Show version"
     }
     Default { Switch-Account $Command }
 }
