@@ -49,13 +49,20 @@ function Get-EmailFromFile {
     
     try {
         $content = Get-Content $File -Raw | ConvertFrom-Json
-        if ($content.id_token) {
-            return Get-EmailFromJwt -Jwt $content.id_token
+        # Codex uses nested structure: tokens.id_token
+        $idToken = $null
+        if ($content.tokens -and $content.tokens.id_token) {
+            $idToken = $content.tokens.id_token
+        } elseif ($content.id_token) {
+            $idToken = $content.id_token
+        }
+        if ($idToken) {
+            return Get-EmailFromJwt -Jwt $idToken
         }
     } catch {
         # Try regex fallback
-        $content = Get-Content $File -Raw
-        if ($content -match '"id_token"\s*:\s*"([^"]+)"') {
+        $raw = Get-Content $File -Raw
+        if ($raw -match '"id_token"\s*:\s*"([^"]+)"') {
             return Get-EmailFromJwt -Jwt $matches[1]
         }
     }
