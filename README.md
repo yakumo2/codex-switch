@@ -1,0 +1,149 @@
+# Codex Account Switcher
+
+在多个 Codex 账户之间快速切换的命令行工具。
+
+**GitHub**: https://github.com/yakumo2/codex-switch
+
+## 功能
+
+- 列出所有已保存的账户
+- 一键切换账户
+- 自动保存当前账户
+- 显示当前活跃账户
+
+## 安装
+
+### 方法一：手动安装
+
+```bash
+# 1. 创建目录
+mkdir -p ~/.local/bin
+mkdir -p ~/.codex/profiles
+
+# 2. 复制脚本到 PATH
+cp codex-switch ~/.local/bin/codex-switch
+chmod +x ~/.local/bin/codex-switch
+
+# 3. 确保 ~/.local/bin 在 PATH 中
+echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
+source ~/.bashrc
+```
+
+### 方法二：一键安装脚本
+
+解压后进入目录，运行安装脚本：
+
+```bash
+cd codex-switch
+bash install.sh
+```
+
+或者直接下载远程安装（从 GitHub）：
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/yakumo2/codex-switch/main/codex-switch/install.sh | bash
+```
+
+## 使用方法
+
+### 查看所有账户
+
+```bash
+codex-switch
+# 或
+codex-switch list
+```
+
+输出示例：
+```
+Available Codex accounts:
+=========================
+  - bookgenesis (user1@example.com)
+  - leemao (user2@example.com) (current)
+```
+
+### 保存当前账户
+
+当你用 Codex 登录了一个新账户后，保存它：
+
+```bash
+codex-switch capture
+```
+
+输出：
+```
+✓ Captured current account: user@example.com
+  Saved as: auth-user.json
+```
+
+### 切换账户
+
+```bash
+codex-switch bookgenesis
+```
+
+输出：
+```
+Saved current account as: leemao
+✓ Switched to: user1@example.com
+```
+
+## 工作原理
+
+```
+~/.codex/
+├── auth.json              ← Codex 当前使用的登录凭证
+└── profiles/              ← 保存的账户配置文件
+    ├── auth-bookgenesis.json
+    └── auth-leemao.json
+```
+
+- **切换**: 复制 `profiles/auth-<name>.json` → `~/.codex/auth.json`
+- **保存**: 复制 `~/.codex/auth.json` → `profiles/auth-<email用户名>.json`
+- **识别账户**: 从 JWT `id_token` 中解码提取 email
+
+## 前提条件
+
+1. 已安装 [Codex CLI](https://github.com/openai/codex)：
+   ```bash
+   npm install -g @openai/codex
+   ```
+
+2. 至少登录过一次 Codex：
+   ```bash
+   codex
+   # 首次运行会提示登录
+   ```
+
+## 常见问题
+
+### Q: 切换后 Codex 还是显示旧账户？
+
+尝试重新启动 Codex 或清除缓存：
+```bash
+rm -rf ~/.codex/cache/*
+```
+
+### Q: 如何添加新账户？
+
+1. 先切换到任意已保存的账户（或确保当前账户已保存）
+2. 用 Codex 登录新账户
+3. 运行 `codex-switch capture` 保存
+
+### Q: 支持哪些系统？
+
+支持 macOS、Linux、WSL。Windows 原生需 Git Bash 或 WSL。
+
+## 文件结构
+
+```
+codex-switch/
+├── codex-switch    # 主脚本
+├── install.sh      # 一键安装脚本
+├── README.md       # 本文档（中文）
+└── README_EN.md    # 英文文档
+```
+
+## License
+
+MIT

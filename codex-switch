@@ -1,0 +1,120 @@
+#!/bin/bash
+# Codex Account Switcher
+# https://github.com/openclaw/openclaw
+# Usage: codex-switch <account>
+
+CODEX_AUTH="$HOME/.codex/auth.json"
+PROFILES_DIR="$HOME/.codex/profiles"
+
+# Extract email from JWT id_token
+get_email_from_jwt() {
+    jwt="$1"
+    # JWT format: header.payload.signature
+    payload=$(echo "$jwt" | cut -d. -f2)
+    # Base64 decode (add padding if needed)
+    len=$(echo "$payload" | wc -c)
+    mod=$((len % 4))
+    if [ $mod -ne 0 ]; then
+        payload="${payload}$(printf '=%.0s' $(seq 1 $((4 - mod))))"
+    fi
+    echo "$payload" | base64 -d 2>/dev/null | grep -o '"email":"[^"]*"' | sed 's/"email":"//;s/"$//' | head -1
+}
+
+get_email_from_file() {
+    file="$1"
+    id_token=$(grep -o '"id_token": *"[^"]*"' "$file" | sed 's/"id_token": *"//;s/"$//' | head -1)
+    if [ -n "$id_token" ]; then
+        get_email_from_jwt "$id_token"
+    fi
+}
+
+list_accounts() {
+    echo "Available Codex accounts:"
+    echo "========================="
+    for f in "$PROFILES_DIR"/auth-*.json; do
+        if [ -f "$f" ]; then
+            name=$(basename "$f" .json | sed 's/^auth-//')
+            email=$(get_email_from_file "$f")
+            current=""
+            if [ -f "$CODEX_AUTH" ]; then
+                curr_email=$(get_email_from_file "$CODEX_AUTH")
+                if [ "$email" = "$curr_email" ]; then
+                    current=" (current)"
+                fi
+            fi
+            echo "  - $name ($email)$current"
+        fi
+    done
+}
+
+switch_account() {
+    target="$1"
+    profile_file="$PROFILES_DIR/auth-$target.json"
+
+    if [ ! -f "$profile_file" ]; then
+        echo "Error: Account '$target' not found"
+        echo ""
+        echo "Available profiles:"
+        for f in "$PROFILES_DIR"/auth-*.json; do
+            if [ -f "$f" ]; then
+                name=$(basename "$f" .json | sed 's/^auth-//')
+                echo "  - $name"
+            fi
+        done
+        exit 1
+    fi
+
+    # Backup current auth with email name
+    if [ -f "$CODEX_AUTH" ]; then
+        curr_email=$(get_email_from_file "$CODEX_AUTH")
+        if [ -n "$curr_email" ]; then
+            curr_name=$(echo "$curr_email" | sed 's/@.*//')
+            curr_profile="$PROFILES_DIR/auth-$curr_name.json"
+            if [ ! -f "$curr_profile" ]; then
+                cp "$CODEX_AUTH" "$curr_profile"
+                echo "Saved current account as: $curr_name"
+            fi
+        fi
+    fi
+
+    # Switch to target
+    cp "$profile_file" "$CODEX_AUTH"
+    email=$(get_email_from_file "$profile_file")
+    echo "✓ Switched to: $email"
+}
+
+capture_current() {
+    if [ ! -f "$CODEX_AUTH" ]; then
+        echo "Error: No current auth.json found"
+        exit 1
+    fi
+    email=$(get_email_from_file "$CODEX_AUTH")
+    if [ -z "$email" ]; then
+        echo "Error: Could not extract email from auth.json"
+        exit 1
+    fi
+    name=$(echo "$email" | sed 's/@.*//')
+    cp "$CODEX_AUTH" "$PROFILES_DIR/auth-$name.json"
+    echo "✓ Captured current account: $email"
+    echo "  Saved as: auth-$name.json"
+}
+
+case "$1" in
+    list|ls|-l)
+        list_accounts
+        ;;
+    capture|save)
+        capture_current
+        ;;
+    "")
+        list_accounts
+        echo ""
+        echo "Commands:"
+        echo "  codex-switch <name>   - Switch to saved account"
+        echo "  codex-switch list     - List all saved accounts"
+        echo "  codex-switch capture  - Save current account"
+        ;;
+    *)
+        switch_account "$1"
+        ;;
+esac
